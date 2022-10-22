@@ -52,8 +52,8 @@ fn main() {
 
     let material_ground: Lambertian = Lambertian::new(Vec3::new(0.8, 0.8, 0.0));
     let material_center: Lambertian = Lambertian::new(Vec3::new(0.7, 0.3, 0.3));
-    let material_left: Metal = Metal::new(Vec3::new(0.8, 0.8, 0.8));
-    let material_right: Metal = Metal::new(Vec3::new(0.8, 0.6, 0.2));
+    let material_left: Metal = Metal::new(Vec3::new(0.8, 0.8, 0.8), 0.3);
+    let material_right: Metal = Metal::new(Vec3::new(0.8, 0.6, 0.2), 1.0);
 
     let world = HittableList::new(
         vec![
