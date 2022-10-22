@@ -13,7 +13,7 @@ use hittable::{Hittable, HittableList};
 use sphere::Sphere;
 use camera::Camera;
 use rand::prelude::*;
-use material::{Metal, Lambertian};
+use material::{Metal, Lambertian, Dielectric};
 
 // image
 const ASPECT_RATIO: f32 = 16.0 / 9.0;
@@ -51,8 +51,8 @@ fn main() {
     let mut rng = rand::thread_rng();
 
     let material_ground: Lambertian = Lambertian::new(Vec3::new(0.8, 0.8, 0.0));
-    let material_center: Lambertian = Lambertian::new(Vec3::new(0.7, 0.3, 0.3));
-    let material_left: Metal = Metal::new(Vec3::new(0.8, 0.8, 0.8), 0.3);
+    let material_center: Dielectric = Dielectric::new(1.5);
+    let material_left: Dielectric = Dielectric::new(1.5);
     let material_right: Metal = Metal::new(Vec3::new(0.8, 0.6, 0.2), 1.0);
 
     let world = HittableList::new(
