@@ -1,20 +1,28 @@
-use crate::{vec3::Vec3, hittable::Hittable, hittable::HitRecord, ray::Ray};
+use crate::{
+    vec3::Vec3, 
+    hittable::Hittable, 
+    hittable::HitRecord, 
+    ray::Ray,
+    material::{Material},
+};
 
-pub struct Sphere {
+pub struct Sphere<M: Material> {
     center: Vec3,
     radius: f32,
+    material: M
 }
 
-impl Sphere {
-    pub fn new(center: Vec3, radius: f32) -> Self {
+impl<M: Material> Sphere<M> {
+    pub fn new(center: Vec3, radius: f32, material: M) -> Self {
         Sphere {
-            center: center,
-            radius: radius
+            center,
+            radius,
+            material
         }
     }
 }
 
-impl Hittable for Sphere {
+impl<M: Material> Hittable for Sphere<M> {
     fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
         let oc: Vec3 = ray.origin() - self.center;
         let a: f32 = ray.direction().length_squared();
@@ -41,7 +49,8 @@ impl Hittable for Sphere {
             t: root,
             p,
             normal: (p - self.center) / self.radius,
-            front_face: true
+            front_face: true,
+            material: &self.material
         })
     }
 }

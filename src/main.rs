@@ -4,6 +4,7 @@ mod ray;
 mod hittable;
 mod sphere;
 mod camera;
+mod material;
 
 use vec3::Vec3;
 use color::write_color;
@@ -12,6 +13,7 @@ use hittable::{Hittable, HittableList};
 use sphere::Sphere;
 use camera::Camera;
 use rand::prelude::*;
+use material::{Metal, Lambertian};
 
 // image
 const ASPECT_RATIO: f32 = 16.0 / 9.0;
@@ -32,8 +34,10 @@ fn ray_color(ray: &Ray, world: &HittableList, depth: i32) -> Vec3 {
     }
 
     if let Some(rec) = world.hit(ray, 0.001, std::f32::INFINITY) {
-        let target: Vec3 = rec.p + rec.normal + Vec3::random_in_hemisphere(&rec.normal);
-        return 0.5 * ray_color(&Ray::new(rec.p, target - rec.p), world, depth-1);
+        if let Some((scattered, attenuation)) = rec.material.scatter(&ray, &rec) {
+            return attenuation * ray_color(&scattered, world, depth-1);
+        }
+        return Vec3::new(0.0, 0.0, 0.0);
     }
 
     let unit_direction = Vec3::unit_vector(&ray.direction());
@@ -45,16 +49,33 @@ fn ray_color(ray: &Ray, world: &HittableList, depth: i32) -> Vec3 {
 fn main() {
     let camera: Camera = Camera::new(VIEWPORT_HEIGHT, VIEWPORT_WIDTH, FOCAL_LENGTH);
     let mut rng = rand::thread_rng();
-    
+
+    let material_ground: Lambertian = Lambertian::new(Vec3::new(0.8, 0.8, 0.0));
+    let material_center: Lambertian = Lambertian::new(Vec3::new(0.7, 0.3, 0.3));
+    let material_left: Metal = Metal::new(Vec3::new(0.8, 0.8, 0.8));
+    let material_right: Metal = Metal::new(Vec3::new(0.8, 0.6, 0.2));
+
     let world = HittableList::new(
         vec![
             Box::new(Sphere::new(
-                Vec3::new(0.0, 0.0, -1.0),
-                0.5
+                Vec3::new(0.0, -100.5, -1.0),
+                100.0,
+                material_ground
             )),
             Box::new(Sphere::new(
-                Vec3::new(0.0, -100.5, -1.0),
-                100.0
+                Vec3::new(0.0,    0.0, -1.0),
+                0.5,
+                material_center
+            )),
+            Box::new(Sphere::new(
+                Vec3::new(-1.0,    0.0, -1.0),
+                0.5,
+                material_left
+            )),
+            Box::new(Sphere::new(
+                Vec3::new(1.0,    0.0, -1.0),
+                0.5,
+                material_right
             ))
         ]
     );

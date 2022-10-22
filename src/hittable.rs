@@ -1,16 +1,18 @@
 use crate::vec3::Vec3;
 use crate::ray::Ray;
+use crate::material::Material;
 
 pub trait Hittable {
     fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord>;
 }
 
-#[derive(Default, Clone, Copy)]
-pub struct HitRecord {
+// #[derive(Default)]
+pub struct HitRecord<'a> {
     pub p: Vec3,
     pub normal: Vec3,
     pub t: f32,
     pub front_face: bool,
+    pub material: &'a dyn Material,
 }
 
 pub struct HittableList {
