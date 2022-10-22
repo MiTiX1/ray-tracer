@@ -1,3 +1,4 @@
+use rand::prelude::*;
 
 #[derive(Debug, Default, Copy, Clone, PartialEq)]
 pub struct Vec3 {
@@ -32,7 +33,7 @@ impl Vec3 {
     }
 
     pub fn length_squared(self) -> f32 {
-        self.e[0] * self.e[0] +self.e[1] * self.e[1] +self.e[2] * self.e[2]
+        self.e[0].powi(2) +self.e[1].powi(2) +self.e[2].powi(2)
     }
 
     pub fn dot(v1: &Vec3, v2: &Vec3) -> f32 {
@@ -51,6 +52,26 @@ impl Vec3 {
 
     pub fn unit_vector(v: &Vec3) -> Vec3 {
         *v / v.length()
+    }
+
+    pub fn random(min: f32, max: f32) -> Vec3 {
+        let mut rng = rand::thread_rng();
+        Vec3 {
+            e: [
+                rng.gen_range(min..max),
+                rng.gen_range(min..max),
+                rng.gen_range(min..max)
+            ]
+        }
+    }
+
+    pub fn random_in_unit_sphere() -> Vec3 {
+        loop {
+            let p = Vec3::random(-1.0, 1.0);
+            if p.length_squared() < 1.0 { 
+                return p 
+            }
+        }
     }
 }
 
