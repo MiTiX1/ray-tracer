@@ -12,9 +12,9 @@ pub fn write_color(color: Vec3, samples_per_pixel: f32) {
     let mut b: f32 = color.z();
 
     let scale: f32 = 1.0 / samples_per_pixel;
-    r *= scale; 
-    g *= scale;
-    b *= scale;
+    r = (scale * r).sqrt(); 
+    g = (scale * g).sqrt();
+    b = (scale * b).sqrt();
 
     println!(
         "{} {} {}", 
