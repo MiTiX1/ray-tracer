@@ -26,7 +26,7 @@ const MAX_DEPTH: i32 = 50;
 // camera
 // const VIEWPORT_HEIGHT: f32 = 2.0;
 // const VIEWPORT_WIDTH: f32 = VIEWPORT_HEIGHT * ASPECT_RATIO;
-const FOCAL_LENGTH: f32 = 1.0;
+// const FOCAL_LENGTH: f32 = 1.0;
 
 fn ray_color(ray: &Ray, world: &HittableList, depth: i32) -> Vec3 {
     if depth <= 0 {
@@ -47,26 +47,49 @@ fn ray_color(ray: &Ray, world: &HittableList, depth: i32) -> Vec3 {
 }
 
 fn main() {
-    let camera: Camera = Camera::new(FOCAL_LENGTH, 90.0, ASPECT_RATIO);
+    let camera: Camera = Camera::new(
+        &Vec3::new(-2.0, 2.0, 1.0),
+        &Vec3::new(0.0, 0.0, -1.0),
+        &Vec3::new(0.0, 1.0, 0.0),
+        20.0, 
+        ASPECT_RATIO
+    );
     let mut rng = rand::thread_rng();
 
-    let R: f32 = (std::f32::consts::PI / 4.0).cos();
+    // let R: f32 = (std::f32::consts::PI / 4.0).cos();
 
-    let material_left: Lambertian = Lambertian::new(Vec3::new(0.0, 0.0, 1.0));
-    let material_right: Lambertian = Lambertian::new(Vec3::new(1.0, 0.0, 0.0));
+    let material_ground: Lambertian = Lambertian::new(Vec3::new(0.8, 0.8, 0.0));
+    let material_center: Lambertian = Lambertian::new(Vec3::new(0.1, 0.2, 0.5));
+    let material_left: Dielectric = Dielectric::new(1.5);
+    let material_right: Metal = Metal::new(Vec3::new(0.8, 0.6, 0.2), 0.0);
 
     let world = HittableList::new(
         vec![
             Box::new(Sphere::new(
-                Vec3::new(-R, 0.0, -1.0),
-                R,
+                Vec3::new(0.0, -100.5, -1.0),
+                100.0,
+                material_ground
+            )),
+            Box::new(Sphere::new(
+                Vec3::new(0.0, 0.0, -1.0),
+                0.5,
+                material_center
+            )),
+            Box::new(Sphere::new(
+                Vec3::new(-1.0, 0.0, -1.0),
+                0.5,
                 material_left
             )),
             Box::new(Sphere::new(
-                Vec3::new(R, 0.0, -1.0),
-                R,
+                Vec3::new(-1.0, 0.0, -1.0),
+                -0.45,
+                material_left
+            )),
+            Box::new(Sphere::new(
+                Vec3::new(1.0, 0.0, -1.0),
+                0.5,
                 material_right
-            ))
+            )),
         ]
     );
 
