@@ -72,12 +72,25 @@ impl Dielectric {
 }
 
 impl Material for Dielectric {
-    fn scatter(&self, ray: &Ray, rec: &HitRecord) -> Option<(Ray, Vec3)> {
+    fn scatter(&self, ray_in: &Ray, rec: &HitRecord) -> Option<(Ray, Vec3)> {
         let attenuation: Vec3 = Vec3::new(1.0, 1.0, 1.0);
         let refraction_ratio: f32 = if rec.front_face { 1.0/self.ir } else { self.ir };
+        let unit_direction: Vec3 = Vec3::unit_vector(&ray_in.direction());
+        
+        let cos_theta: f32 = Vec3::dot(&-unit_direction, &rec.normal).min(1.0);
+        let sin_theta: f32 = (1.0 - cos_theta.powi(2)).sqrt();
+        let cannot_refract: bool = refraction_ratio * sin_theta > 1.0;
 
-        let unit_direction: Vec3 = Vec3::unit_vector(&ray.direction());
-        let refracted: Vec3 = Vec3::refract(&unit_direction, &rec.normal, refraction_ratio);
-        Some((Ray::new(rec.p, refracted), attenuation))
+        let direction: Vec3;
+        if cannot_refract {
+            direction = Vec3::reflect(&unit_direction, &rec.normal);
+        } else {
+            direction = Vec3::refract(&unit_direction, &rec.normal, refraction_ratio);
+        }
+        
+        Some((
+            Ray::new(rec.p, direction),
+            attenuation
+        ))
     }
 }

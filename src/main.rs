@@ -40,7 +40,7 @@ fn ray_color(ray: &Ray, world: &HittableList, depth: i32) -> Vec3 {
         return Vec3::new(0.0, 0.0, 0.0);
     }
 
-    let unit_direction = Vec3::unit_vector(&ray.direction());
+    let unit_direction: Vec3 = Vec3::unit_vector(&ray.direction());
     let t = 0.5 * (unit_direction.y() + 1.0);
 
     (1.0-t) * Vec3::new(1.0, 1.0, 1.0) + t * Vec3::new(0.5, 0.7, 1.0)
@@ -51,9 +51,9 @@ fn main() {
     let mut rng = rand::thread_rng();
 
     let material_ground: Lambertian = Lambertian::new(Vec3::new(0.8, 0.8, 0.0));
-    let material_center: Dielectric = Dielectric::new(1.5);
+    let material_center: Lambertian = Lambertian::new(Vec3::new(0.1, 0.2, 0.5));
     let material_left: Dielectric = Dielectric::new(1.5);
-    let material_right: Metal = Metal::new(Vec3::new(0.8, 0.6, 0.2), 1.0);
+    let material_right: Metal = Metal::new(Vec3::new(0.8, 0.6, 0.2), 0.0);
 
     let world = HittableList::new(
         vec![
