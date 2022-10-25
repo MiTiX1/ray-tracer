@@ -1,6 +1,7 @@
 use crate::ray::Ray;
 use crate::hittable::HitRecord;
 use crate::vec3::Vec3;
+use rand::prelude::*;
 
 pub trait Material {
     fn scatter(&self, ray: &Ray, rec: &HitRecord) -> Option<(Ray, Vec3)>;
@@ -59,6 +60,7 @@ impl Material for Metal {
     }
 }
 
+#[derive(Clone, Copy)]
 pub struct Dielectric {
     ir: f32,
 } 
@@ -68,6 +70,11 @@ impl Dielectric {
         Dielectric {
             ir
         }
+    }
+
+    pub fn reflectance(cosine: f32, ref_idx: f32) -> f32 {
+        let r0: f32 = ((1.0 - ref_idx) / (1.0 + ref_idx)).powi(2);
+        r0 + (1.0 - r0) * (1.0 - cosine).powi(5)
     }
 }
 
@@ -82,7 +89,8 @@ impl Material for Dielectric {
         let cannot_refract: bool = refraction_ratio * sin_theta > 1.0;
 
         let direction: Vec3;
-        if cannot_refract {
+        let mut rng = rand::thread_rng();
+        if cannot_refract || Dielectric::reflectance(cos_theta, refraction_ratio) > rng.gen::<f32>() {
             direction = Vec3::reflect(&unit_direction, &rec.normal);
         } else {
             direction = Vec3::refract(&unit_direction, &rec.normal, refraction_ratio);
