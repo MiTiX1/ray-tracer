@@ -54,7 +54,7 @@ impl Vec3 {
         *v / v.length()
     }
 
-    pub fn random(min: f32, max: f32) -> Vec3 {
+    pub fn random_min_max(min: f32, max: f32) -> Vec3 {
         let mut rng = rand::thread_rng();
         Vec3 {
             e: [
@@ -65,9 +65,20 @@ impl Vec3 {
         }
     }
 
+    pub fn random() -> Vec3 {
+        let mut rng = rand::thread_rng();
+        Vec3 {
+            e: [
+                rng.gen::<f32>(),
+                rng.gen::<f32>(),
+                rng.gen::<f32>()
+            ]
+        }
+    }
+
     pub fn random_in_unit_sphere() -> Vec3 {
         loop {
-            let p = Vec3::random(-1.0, 1.0);
+            let p = Vec3::random_min_max(-1.0, 1.0);
             if p.length_squared() < 1.0 { 
                 return p 
             }
