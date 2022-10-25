@@ -47,12 +47,16 @@ fn ray_color(ray: &Ray, world: &HittableList, depth: i32) -> Vec3 {
 }
 
 fn main() {
+    let lookfrom: Vec3 = Vec3::new(3.0, 3.0, 2.0);
+    let lookat: Vec3 = Vec3::new(0.0, 0.0, -1.0);
     let camera: Camera = Camera::new(
-        &Vec3::new(-2.0, 2.0, 1.0),
-        &Vec3::new(0.0, 0.0, -1.0),
+        &lookfrom,
+        &lookat,
         &Vec3::new(0.0, 1.0, 0.0),
         20.0, 
-        ASPECT_RATIO
+        ASPECT_RATIO,
+        2.0,
+        (lookfrom-lookat).length()
     );
     let mut rng = rand::thread_rng();
 
