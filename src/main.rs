@@ -20,7 +20,7 @@ const ASPECT_RATIO: f32 = 16.0 / 9.0;
 const IMAGE_WIDTH: i32 = 1280;
 const IMAGE_HEIGHT: i32 = (IMAGE_WIDTH as f32 / ASPECT_RATIO) as i32;
 const MAX_VALUE: i32 = 255;
-const SAMPLES_PER_PIXEL: f32 = 500.0; 
+const SAMPLES_PER_PIXEL: f32 = 100.0; 
 const MAX_DEPTH: i32 = 50;
 
 fn ray_color(ray: &Ray, world: &HittableList, depth: i32) -> Vec3 {
