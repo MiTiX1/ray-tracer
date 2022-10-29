@@ -14,6 +14,7 @@ use sphere::Sphere;
 use camera::Camera;
 use rand::prelude::*;
 use material::{Metal, Lambertian, Dielectric};
+use rayon::prelude::*;
 
 // image
 const ASPECT_RATIO: f32 = 16.0 / 9.0;
@@ -126,7 +127,6 @@ fn main() {
         0.1,
         10.0
     );
-    let mut rng = rand::thread_rng();
 
     let world: HittableList = random_scene();
 
@@ -136,7 +136,9 @@ fn main() {
     for j in (0..IMAGE_HEIGHT).rev() {
         
         eprintln!("Scanlines remaining: {}", j);
-        for i in 0..IMAGE_WIDTH {
+
+        let scanlines: Vec<Vec3> = (0..IMAGE_WIDTH).into_par_iter().map(|i| {
+            let mut rng = rand::thread_rng();
             let mut pixel_color = Vec3::new(0.0, 0.0, 0.0);
             for _ in 0..SAMPLES_PER_PIXEL as i32 {
                 let u: f32 = (i as f32 + rng.gen::<f32>()) / (IMAGE_WIDTH-1) as f32;
@@ -145,7 +147,10 @@ fn main() {
 
                 pixel_color = pixel_color + ray_color(&ray, &world, MAX_DEPTH);
             }
-            write_color(pixel_color, SAMPLES_PER_PIXEL);
+            pixel_color
+        }).collect();
+        for color in scanlines {
+            write_color(color, SAMPLES_PER_PIXEL);
         }
     }
     eprintln!("Done");

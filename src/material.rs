@@ -3,7 +3,7 @@ use crate::hittable::HitRecord;
 use crate::vec3::Vec3;
 use rand::prelude::*;
 
-pub trait Material {
+pub trait Material: Sync {
     fn scatter(&self, ray: &Ray, rec: &HitRecord) -> Option<(Ray, Vec3)>;
 }
 

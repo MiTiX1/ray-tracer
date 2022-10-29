@@ -2,11 +2,10 @@ use crate::vec3::Vec3;
 use crate::ray::Ray;
 use crate::material::Material;
 
-pub trait Hittable {
+pub trait Hittable: Sync {
     fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord>;
 }
 
-// #[derive(Default)]
 pub struct HitRecord<'a> {
     pub p: Vec3,
     pub normal: Vec3,
